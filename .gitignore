@@ -1,0 +1,10 @@
+# file
+.gdb_history
+compile_commands.json
+
+# directory
+!/**/
+
+/build/
+/.xmake/
+/.cache/

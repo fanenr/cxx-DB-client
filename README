@@ -1,0 +1,6 @@
+Prerquisites:
+  1. Qt SDK
+  2. xmake
+
+Build:
+  xmake
