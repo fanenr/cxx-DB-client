@@ -42,7 +42,7 @@ public:
   }
 
   std::optional<QByteArray>
-  post (QString const &url, QMap<QStringView, QStringView> const &map)
+  post (QString const &url, QMap<QString, QString> const &map)
   {
     auto str = QString ();
 

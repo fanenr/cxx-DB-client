@@ -11,21 +11,11 @@ Reg::Reg (Log *parent) : QDialog (parent)
 int
 Reg::exec ()
 {
-  switch (parent->category ())
+  if (parent->category () == Type::TEACHER)
     {
-    case type::STUDENT:
-      ui.label2->setText (tr ("学号"));
-      ui.label3->setText (tr ("昵称"));
-      ui.label4->setText (tr ("电话"));
-      break;
-
-    case type::MERCHANT:
-      ui.label2->setText (tr ("名称"));
-      ui.label3->setText (tr ("电话"));
-      ui.label4->setText (tr ("位置"));
-      break;
+      ui.hint2->setVisible (false);
+      ui.ledit2->setVisible (false);
     }
-
   return QDialog::exec ();
 }
 
@@ -38,43 +28,40 @@ Reg::on_pbtn1_clicked ()
 void
 Reg::on_pbtn2_clicked ()
 {
-  auto str1 = ui.ledit1->text ();
-  auto str2 = ui.ledit2->text ();
-  auto str3 = ui.ledit3->text ();
+  auto name = ui.ledit1->text ();
+  auto date = ui.ledit2->text ();
 
-  if (str1.isEmpty () || str2.isEmpty () || str3.isEmpty ())
+  if (name.isEmpty () || date.isEmpty ())
     {
       QMessageBox::warning (this, tr ("提示"), tr ("请完整填写信息"));
       return;
     }
 
   auto req_url = QString ();
-  auto req_data = QJsonObject ();
+  auto req_data = QMap<QString, QString> ();
 
-  req_data["user"] = parent->ui.ledit1->text ();
-  req_data["pass"] = parent->ui.ledit2->text ();
+  req_data["name"] = std::move (name);
+  req_data["date"] = std::move (date);
+  req_data["username"] = parent->ui.ledit1->text ();
+  req_data["password"] = parent->ui.ledit2->text ();
 
   switch (parent->category ())
     {
-    case type::STUDENT:
-      req_data["id"] = str1;
-      req_data["name"] = str2;
-      req_data["number"] = str3;
-      req_url = URL_STUDENT_NEW;
+    case Type::STUDENT:
+      req_url = URL_STUDENT_REG;
       break;
 
-    case type::MERCHANT:
-      req_data["name"] = str1;
-      req_data["number"] = str2;
-      req_data["position"] = str3;
-      req_url = URL_MERCHANT_NEW;
+    case Type::TEACHER:
+      req_url = URL_TEACHER_REG;
       break;
     }
 
   auto http = Http ();
-  auto reply = http.post (req_url, req_data);
-  if (!Http::get_data (reply, this).has_value ())
-    return;
+  auto res = http.post (req_url, req_data);
+
+  if (!res.has_value ())
+    return (void)QMessageBox::warning (this, tr ("错误"),
+                                       tr ("无法发送网络请求"));
 
   QMessageBox::information (this, tr ("提示"), tr ("注册成功，请返回登录"));
   close ();

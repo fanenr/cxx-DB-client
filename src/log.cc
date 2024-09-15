@@ -9,7 +9,7 @@ Log::category ()
   if (ui.rbtn1->isChecked ())
     return Type::STUDENT;
   if (ui.rbtn2->isChecked ())
-    return type::TEACHER;
+    return Type::TEACHER;
   abort ();
 }
 
@@ -51,7 +51,7 @@ Log::on_pbtn2_clicked ()
       break;
     }
 
-  auto req_data = QMap<QStringView, QStringView> ();
+  auto req_data = QMap<QString, QString> ();
   req_data["username"] = user;
   req_data["password"] = pass;
 
