@@ -29,52 +29,14 @@
       <property name="alignment">
        <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
       </property>
-      <layout class="QHBoxLayout" name="hbox">
+      <layout class="QHBoxLayout" name="hbox" stretch="1,0">
        <item>
-        <layout class="QGridLayout" name="grid" columnstretch="0,1,0,1">
+        <layout class="QGridLayout" name="grid" columnstretch="0,0">
          <property name="leftMargin">
           <number>9</number>
          </property>
-         <item row="1" column="0">
-          <widget class="QLabel" name="hint2">
-           <property name="font">
-            <font>
-             <bold>true</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>帐号: </string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="3">
-          <widget class="QLabel" name="info3">
-           <property name="text">
-            <string>TextLabel</string>
-           </property>
-          </widget>
-         </item>
          <item row="0" column="1">
           <widget class="QLabel" name="info1">
-           <property name="text">
-            <string>TextLabel</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="2">
-          <widget class="QLabel" name="hint3">
-           <property name="font">
-            <font>
-             <bold>true</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>学号: </string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QLabel" name="info2">
            <property name="text">
             <string>TextLabel</string>
            </property>
@@ -88,7 +50,26 @@
             </font>
            </property>
            <property name="text">
-            <string>昵称: </string>
+            <string>姓名：</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLabel" name="info2">
+           <property name="text">
+            <string>TextLabel</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="hint2">
+           <property name="font">
+            <font>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>学号：</string>
            </property>
           </widget>
          </item>
@@ -199,7 +180,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>选修课程</string>
+            <string>选修</string>
            </property>
           </widget>
          </item>
@@ -212,7 +193,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>成绩分析</string>
+            <string>分析</string>
            </property>
           </widget>
          </item>

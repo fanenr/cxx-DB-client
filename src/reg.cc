@@ -14,16 +14,12 @@ Reg::exec ()
   switch (parent->category ())
     {
     case type::STUDENT:
-      setWindowTitle (tr ("学生注册"));
-      ui.label1->setText (tr ("学生注册"));
       ui.label2->setText (tr ("学号"));
       ui.label3->setText (tr ("昵称"));
       ui.label4->setText (tr ("电话"));
       break;
 
     case type::MERCHANT:
-      setWindowTitle (tr ("商户注册"));
-      ui.label1->setText (tr ("商户注册"));
       ui.label2->setText (tr ("名称"));
       ui.label3->setText (tr ("电话"));
       ui.label4->setText (tr ("位置"));

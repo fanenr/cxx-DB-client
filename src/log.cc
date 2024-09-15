@@ -37,10 +37,10 @@ Log::on_pbtn2_clicked ()
     return (void)QMessageBox::warning (this, tr ("提示"),
                                        tr ("请输入帐号密码"));
 
-  auto typ = category ();
+  auto type = category ();
   auto req_url = QString ();
 
-  switch (typ)
+  switch (type)
     {
     case Type::STUDENT:
       req_url = URL_STUDENT_LOG;
@@ -51,23 +51,25 @@ Log::on_pbtn2_clicked ()
       break;
     }
 
-  auto req_data = QJsonObject ();
-  req_data["user"] = user;
-  req_data["pass"] = pass;
+  auto req_data = QMap<QStringView, QStringView> ();
+  req_data["username"] = user;
+  req_data["password"] = pass;
 
   auto http = Http ();
-  auto reply = http.post (req_url, req_data);
+  auto res = http.post (req_url, req_data);
 
-  auto res = Http::get_data (reply, this);
   if (!res.has_value ())
-    return;
+    return (void)QMessageBox::warning (this, tr ("错误"),
+                                       tr ("无法发送网络请求"));
 
-  auto info = QMap<QString, QString> ();
-  auto map = res.value ()["data"].toObject ().toVariantMap ();
-  for (auto it = map.cbegin (); it != map.cend (); it++)
-    info.insert (it.key (), it.value ().toString ());
+  auto object = QJsonDocument::fromJson (res.value ());
 
-  auto home = new Home (typ, std::move (info));
+  auto info = Home::Info{
+    .name = object["name"].toString (),
+    .token = object["token"].toString (),
+  };
+
+  auto home = new Home (type, std::move (info));
   home->show ();
   close ();
 }

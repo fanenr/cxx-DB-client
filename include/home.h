@@ -18,15 +18,20 @@ class Home : public QMainWindow
   friend class New;
   friend class Eva;
 
+public:
+  struct Info
+  {
+    QString name;
+    QString token;
+  };
+
 private:
-  using info_t = QMap<QString, QString>;
   Ui::Home ui = {};
-  info_t info;
+  Info info;
   Type typ;
-  stat sts;
 
 public:
-  Home (Type typ, info_t info);
+  Home (Type typ, Info info);
   void load_info ();
   void load_dish ();
   void load_eval ();
