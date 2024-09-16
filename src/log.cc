@@ -65,6 +65,7 @@ Log::on_pbtn2_clicked ()
   auto object = QJsonDocument::fromJson (res.value ());
 
   auto info = Home::Info{
+    .user = std::move (user),
     .name = object["name"].toString (),
     .token = object["token"].toString (),
   };

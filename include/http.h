@@ -25,8 +25,6 @@ public:
     connect (&nam, &QNetworkAccessManager::finished, &loop, &QEventLoop::quit);
   }
 
-  ~Http () = default;
-
 public:
   std::optional<QByteArray>
   post (QString const &url, QByteArray const &data)

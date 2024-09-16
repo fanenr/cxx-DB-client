@@ -21,6 +21,7 @@ class Home : public QMainWindow
 public:
   struct Info
   {
+    QString user;
     QString name;
     QString token;
   };
@@ -28,13 +29,10 @@ public:
 private:
   Ui::Home ui = {};
   Info info;
-  Type typ;
+  Type type;
 
 public:
-  Home (Type typ, Info info);
-  void load_info ();
-  void load_dish ();
-  void load_eval ();
+  Home (Type type, Info info);
 
 private slots:
   void on_pbtn1_clicked ();
