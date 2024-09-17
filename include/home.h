@@ -33,6 +33,7 @@ private:
 
 public:
   Home (Type type, Info info);
+  void load_course ();
 
 private slots:
   void on_pbtn1_clicked ();

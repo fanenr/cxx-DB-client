@@ -37,27 +37,19 @@ Reg::on_pbtn2_clicked ()
       return;
     }
 
-  auto req_url = QString ();
-  auto req_data = QMap<QString, QString> ();
+  auto type = parent->category ();
+  auto req_url
+      = QString (type == Type::STUDENT ? URL_STUDENT_REG : URL_TEACHER_REG);
 
+  auto req_data = QMap<QString, QString> ();
   req_data["name"] = std::move (name);
   req_data["date"] = std::move (date);
   req_data["username"] = parent->ui.ledit1->text ();
   req_data["password"] = parent->ui.ledit2->text ();
 
-  switch (parent->category ())
-    {
-    case Type::STUDENT:
-      req_url = URL_STUDENT_REG;
-      break;
-
-    case Type::TEACHER:
-      req_url = URL_TEACHER_REG;
-      break;
-    }
-
   auto http = Http ();
-  auto res = http.post (req_url, req_data);
+  auto req = Http::make_req (req_url);
+  auto res = http.post (req, req_data);
 
   if (!res.has_value ())
     return (void)QMessageBox::warning (this, tr ("错误"),

@@ -38,36 +38,27 @@ Log::on_pbtn2_clicked ()
                                        tr ("请输入帐号密码"));
 
   auto type = category ();
-  auto req_url = QString ();
-
-  switch (type)
-    {
-    case Type::STUDENT:
-      req_url = URL_STUDENT_LOG;
-      break;
-
-    case Type::TEACHER:
-      req_url = URL_TEACHER_LOG;
-      break;
-    }
+  auto req_url
+      = QString (type == Type::STUDENT ? URL_STUDENT_LOG : URL_TEACHER_LOG);
 
   auto req_data = QMap<QString, QString> ();
   req_data["username"] = user;
   req_data["password"] = pass;
 
   auto http = Http ();
-  auto res = http.post (req_url, req_data);
+  auto req = Http::make_req (req_url);
+  auto res = http.post (req, req_data);
 
   if (!res.has_value ())
     return (void)QMessageBox::warning (this, tr ("错误"),
                                        tr ("无法发送网络请求"));
 
-  auto object = QJsonDocument::fromJson (res.value ());
+  auto obj = QJsonDocument::fromJson (res.value ()).object ();
 
   auto info = Home::Info{
     .user = std::move (user),
-    .name = object["name"].toString (),
-    .token = object["token"].toString (),
+    .name = obj["name"].toString (),
+    .token = obj["token"].toString (),
   };
 
   auto home = new Home (type, std::move (info));

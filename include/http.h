@@ -26,10 +26,37 @@ public:
   }
 
 public:
-  std::optional<QByteArray>
-  post (QString const &url, QByteArray const &data)
+  static QNetworkRequest
+  make_req (QString const &url)
+  {
+    return QNetworkRequest (url);
+  }
+
+  static QNetworkRequest
+  make_req (QString const &url, QString const &jwt)
   {
     auto req = QNetworkRequest (url);
+    auto token = QString ("Bearer ") + jwt;
+    req.setRawHeader ("Authorization", token.toUtf8 ());
+    return req;
+  }
+
+public:
+  std::optional<QByteArray>
+  get (QNetworkRequest const &req)
+  {
+    auto reply = nam.get (req);
+
+    loop.exec ();
+
+    if (reply->error ())
+      return std::nullopt;
+    return reply->readAll ();
+  }
+
+  std::optional<QByteArray>
+  post (QNetworkRequest const &req, QByteArray const &data)
+  {
     auto reply = nam.post (req, data);
 
     loop.exec ();
@@ -40,7 +67,7 @@ public:
   }
 
   std::optional<QByteArray>
-  post (QString const &url, QMap<QString, QString> const &map)
+  post (QNetworkRequest const &req, QMap<QString, QString> const &map)
   {
     auto str = QString ();
 
@@ -54,7 +81,7 @@ public:
           str.append ("&");
       }
 
-    return post (url, str.toUtf8 ());
+    return post (req, str.toUtf8 ());
   }
 };
 
