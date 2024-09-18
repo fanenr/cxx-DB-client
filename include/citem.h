@@ -44,7 +44,7 @@ public:
   bool
   operator< (QListWidgetItem const &other) const override
   {
-    return data.name < static_cast<CourseItem const &> (other).data.name;
+    return data.name < ((CourseItem const &)other).data.name;
   }
 };
 

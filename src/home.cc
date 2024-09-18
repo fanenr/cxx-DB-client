@@ -1,5 +1,6 @@
 #include "home.h"
 #include "citem.h"
+#include "gitem.h"
 #include "http.h"
 
 #include <QJsonArray>
@@ -52,6 +53,37 @@ Home::load_course ()
 }
 
 void
+Home::load_grade ()
+{
+  ui.list->clear ();
+  ui.list->clearSelection ();
+  ui.gbox2->setTitle (tr ("成绩列表"));
+
+  auto req_url = QString (URL_STUDENT_GRADE);
+
+  auto http = Http ();
+  auto req = Http::make_req (req_url, info.token);
+
+  auto res = http.get (req);
+  if (!res.has_value ())
+    return (void)QMessageBox::warning (this, tr ("错误"),
+                                       tr ("无法发送网络请求"));
+
+  auto array = QJsonDocument::fromJson (res.value ()).array ();
+  for (auto e : array)
+    {
+      auto obj = e.toObject ();
+      auto item = Grade{
+        .id = obj["id"].toInt (),
+        .score = obj["score"].toInt (),
+        .course = obj["course"].toString (),
+        .teacher = obj["teacher"].toString (),
+      };
+      new GradeItem (ui.list, std::move (item));
+    }
+}
+
+void
 Home::on_pbtn1_clicked ()
 {
 }
@@ -71,6 +103,7 @@ Home::on_pbtn3_clicked ()
 void
 Home::on_pbtn4_clicked ()
 {
+  load_grade ();
 }
 
 void

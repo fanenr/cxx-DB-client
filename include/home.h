@@ -34,6 +34,7 @@ private:
 public:
   Home (Type type, Info info);
   void load_course ();
+  void load_grade ();
 
 private slots:
   void on_pbtn1_clicked ();
