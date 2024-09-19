@@ -1,15 +1,10 @@
 #ifndef HTTP_H
 #define HTTP_H
 
-#include <optional>
-
 #include <QEventLoop>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QMessageBox>
-
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkReply>
+#include <optional>
 
 class Http : QObject
 {
@@ -42,31 +37,23 @@ public:
   }
 
 public:
-  std::optional<QByteArray>
+  QNetworkReply *
   get (QNetworkRequest const &req)
   {
     auto reply = nam.get (req);
-
     loop.exec ();
-
-    if (reply->error ())
-      return std::nullopt;
-    return reply->readAll ();
+    return reply;
   }
 
-  std::optional<QByteArray>
+  QNetworkReply *
   post (QNetworkRequest const &req, QByteArray const &data)
   {
     auto reply = nam.post (req, data);
-
     loop.exec ();
-
-    if (reply->error ())
-      return std::nullopt;
-    return reply->readAll ();
+    return reply;
   }
 
-  std::optional<QByteArray>
+  QNetworkReply *
   post (QNetworkRequest const &req, QMap<QString, QString> const &map)
   {
     auto str = QString ();

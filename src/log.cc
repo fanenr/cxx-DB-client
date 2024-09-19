@@ -3,6 +3,9 @@
 #include "http.h"
 #include "reg.h"
 
+#include <QJsonDocument>
+#include <QJsonObject>
+
 Type
 Log::category ()
 {
@@ -47,13 +50,13 @@ Log::on_pbtn2_clicked ()
 
   auto http = Http ();
   auto req = Http::make_req (req_url);
-  auto res = http.post (req, req_data);
+  auto reply = http.post (req, req_data);
 
-  if (!res.has_value ())
-    return (void)QMessageBox::warning (this, tr ("错误"),
-                                       tr ("无法发送网络请求"));
+  if (!util::check_reply (reply))
+    return;
 
-  auto obj = QJsonDocument::fromJson (res.value ()).object ();
+  auto data = reply->readAll ();
+  auto obj = QJsonDocument::fromJson (data).object ();
 
   auto info = Home::Info{
     .user = std::move (user),

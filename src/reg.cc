@@ -2,6 +2,9 @@
 #include "http.h"
 #include "log.h"
 
+#include <QJsonDocument>
+#include <QJsonObject>
+
 Reg::Reg (Log *parent) : QDialog (parent)
 {
   this->parent = parent;
@@ -49,11 +52,10 @@ Reg::on_pbtn2_clicked ()
 
   auto http = Http ();
   auto req = Http::make_req (req_url);
-  auto res = http.post (req, req_data);
+  auto reply = http.post (req, req_data);
 
-  if (!res.has_value ())
-    return (void)QMessageBox::warning (this, tr ("错误"),
-                                       tr ("无法发送网络请求"));
+  if (!util::check_reply (reply))
+    return;
 
   QMessageBox::information (this, tr ("提示"), tr ("注册成功，请返回登录"));
   close ();

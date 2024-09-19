@@ -4,6 +4,8 @@
 #include "http.h"
 
 #include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 Home::Home (Type type, Info info)
     : QMainWindow (), type (type), info (std::move (info))
@@ -32,12 +34,12 @@ Home::load_course ()
   auto http = Http ();
   auto req = Http::make_req (req_url, info.token);
 
-  auto res = http.get (req);
-  if (!res.has_value ())
-    return (void)QMessageBox::warning (this, tr ("错误"),
-                                       tr ("无法发送网络请求"));
+  auto reply = http.get (req);
+  if (!util::check_reply (reply))
+    return;
 
-  auto array = QJsonDocument::fromJson (res.value ()).array ();
+  auto data = reply->readAll ();
+  auto array = QJsonDocument::fromJson (data).array ();
   for (auto e : array)
     {
       auto obj = e.toObject ();
@@ -64,12 +66,12 @@ Home::load_grade ()
   auto http = Http ();
   auto req = Http::make_req (req_url, info.token);
 
-  auto res = http.get (req);
-  if (!res.has_value ())
-    return (void)QMessageBox::warning (this, tr ("错误"),
-                                       tr ("无法发送网络请求"));
+  auto reply = http.get (req);
+  if (!util::check_reply (reply))
+    return;
 
-  auto array = QJsonDocument::fromJson (res.value ()).array ();
+  auto data = reply->readAll ();
+  auto array = QJsonDocument::fromJson (data).array ();
   for (auto e : array)
     {
       auto obj = e.toObject ();
@@ -123,10 +125,9 @@ Home::on_pbtn5_clicked ()
   auto http = Http ();
   auto req = Http::make_req (req_url, info.token);
 
-  auto res = http.post (req, req_data);
-  if (!res.has_value ())
-    return (void)QMessageBox::warning (this, tr ("错误"),
-                                       tr ("无法发送网络请求"));
+  auto reply = http.post (req, req_data);
+  if (!util::check_reply (reply))
+    return;
 
   QMessageBox::information (this, tr ("成功"), tr ("选修成功"));
 }
