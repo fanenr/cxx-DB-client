@@ -43,7 +43,7 @@ Reg::on_pbtn2_clicked ()
 
   auto req_data = QMap<QString, QString> ();
   req_data["name"] = std::move (name);
-  req_data["date"] = std::move (date);
+  req_data["start"] = std::move (date);
   req_data["username"] = parent->ui.ledit1->text ();
   req_data["password"] = parent->ui.ledit2->text ();
 
