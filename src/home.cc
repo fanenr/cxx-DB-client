@@ -109,6 +109,26 @@ Home::on_pbtn4_clicked ()
 void
 Home::on_pbtn5_clicked ()
 {
+  if (type == Type::TEACHER)
+    return;
+
+  auto item = (CourseItem *)ui.list->currentItem ();
+  if (item == nullptr)
+    return;
+
+  auto req_url = QString (URL_STUDENT_TAKE);
+  auto req_data = QMap<QString, QString> ();
+  req_data["cid"] = QString::number (item->data.id);
+
+  auto http = Http ();
+  auto req = Http::make_req (req_url, info.token);
+
+  auto res = http.post (req, req_data);
+  if (!res.has_value ())
+    return (void)QMessageBox::warning (this, tr ("错误"),
+                                       tr ("无法发送网络请求"));
+
+  QMessageBox::information (this, tr ("成功"), tr ("选修成功"));
 }
 
 void
