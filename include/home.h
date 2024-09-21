@@ -33,8 +33,11 @@ private:
 
 public:
   Home (Type type, Info info);
+
+private:
   void load_course ();
   void load_grade ();
+  void course_new ();
 
 private slots:
   void on_pbtn1_clicked ();

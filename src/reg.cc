@@ -35,10 +35,8 @@ Reg::on_pbtn2_clicked ()
   auto date = ui.ledit2->text ();
 
   if (name.isEmpty () || date.isEmpty ())
-    {
-      QMessageBox::warning (this, tr ("提示"), tr ("请完整填写信息"));
-      return;
-    }
+    return (void)QMessageBox::warning (nullptr, tr ("提示"),
+                                       tr ("请完整填写信息"));
 
   auto type = parent->category ();
   auto req_url
@@ -57,6 +55,6 @@ Reg::on_pbtn2_clicked ()
   if (!util::check_reply (reply))
     return;
 
-  QMessageBox::information (this, tr ("提示"), tr ("注册成功，请返回登录"));
+  QMessageBox::information (nullptr, tr ("成功"), tr ("注册成功，请返回登录"));
   close ();
 }

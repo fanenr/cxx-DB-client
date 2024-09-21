@@ -23,7 +23,7 @@ Log::on_pbtn1_clicked ()
   auto pass = ui.ledit2->text ();
 
   if (user.isEmpty () || pass.isEmpty ())
-    return (void)QMessageBox::warning (this, tr ("提示"),
+    return (void)QMessageBox::warning (nullptr, tr ("提示"),
                                        tr ("请输入帐号密码"));
 
   auto reg = Reg (this);
@@ -37,7 +37,7 @@ Log::on_pbtn2_clicked ()
   auto pass = ui.ledit2->text ();
 
   if (user.isEmpty () || pass.isEmpty ())
-    return (void)QMessageBox::warning (this, tr ("提示"),
+    return (void)QMessageBox::warning (nullptr, tr ("提示"),
                                        tr ("请输入帐号密码"));
 
   auto type = category ();

@@ -180,7 +180,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>选修</string>
+            <string>选修课程</string>
            </property>
           </widget>
          </item>
@@ -193,7 +193,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>分析</string>
+            <string>成绩分析</string>
            </property>
           </widget>
          </item>

@@ -16,7 +16,12 @@ Home::Home (Type type, Info info)
   ui.info1->setText (this->info.name);
   ui.info2->setText (this->info.user);
 
-  connect (ui.sort, &QCheckBox::toggled, [this] (bool dec) {});
+  if (this->type == Type::TEACHER)
+    ui.pbtn5->setText (tr ("创建课程"));
+
+  connect (ui.sort, &QCheckBox::toggled, [this] (bool dec) {
+    ui.list->sortItems (dec ? Qt::DescendingOrder : Qt::AscendingOrder);
+  });
 
   load_course ();
 }
@@ -108,11 +113,54 @@ Home::on_pbtn4_clicked ()
   load_grade ();
 }
 
+#include "ui_form.h"
+
+void
+Home::course_new ()
+{
+  auto dialog = QDialog (this);
+  auto ui = Ui::Form ();
+  ui.setupUi (&dialog);
+
+  dialog.setWindowTitle (tr ("创建课程"));
+  ui.label->setText (tr ("课程信息"));
+  ui.hint1->setText (tr ("课程名称"));
+  ui.hint2->setText (tr ("开课时间"));
+
+  connect (ui.pbtn1, &QPushButton::clicked, [&dialog] { dialog.close (); });
+
+  connect (ui.pbtn2, &QPushButton::clicked, [this, &ui, &dialog] {
+    auto name = ui.ledit1->text ();
+    auto start = ui.ledit2->text ();
+    if (name.isEmpty () || start.isEmpty ())
+      return (void)QMessageBox::warning (nullptr, tr ("提示"),
+                                         tr ("请完整填写信息"));
+
+    auto req_url = QString (URL_TEACHER_NEW);
+    auto req_data = QMap<QString, QString> ();
+    req_data["start"] = std::move (start);
+    req_data["name"] = std::move (name);
+
+    auto http = Http ();
+    auto req = Http::make_req (req_url, info.token);
+
+    auto reply = http.post (req, req_data);
+    if (!util::check_reply (reply))
+      return;
+
+    QMessageBox::information (nullptr, tr ("成功"), tr ("创建成功"));
+    dialog.close ();
+    load_course ();
+  });
+
+  dialog.exec ();
+}
+
 void
 Home::on_pbtn5_clicked ()
 {
   if (type == Type::TEACHER)
-    return;
+    return course_new ();
 
   auto item = (CourseItem *)ui.list->currentItem ();
   if (item == nullptr)
@@ -129,7 +177,7 @@ Home::on_pbtn5_clicked ()
   if (!util::check_reply (reply))
     return;
 
-  QMessageBox::information (this, tr ("成功"), tr ("选修成功"));
+  QMessageBox::information (nullptr, tr ("成功"), tr ("选修成功"));
 }
 
 void
