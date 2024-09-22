@@ -14,6 +14,7 @@ Home::Home (Type type, Info info)
 
   ui.info1->setText (this->info.name);
   ui.info2->setText (this->info.user);
+  ui.info3->setText (this->info.start);
 
   if (this->type == Type::TEACHER)
     ui.pbtn5->setText (tr ("创建课程"));
@@ -128,9 +129,9 @@ Home::course_new ()
   ui.hint1->setText (tr ("课程名称"));
   ui.hint2->setText (tr ("开课时间"));
 
-  connect (ui.pbtn1, &QPushButton::clicked, [&dialog] { dialog.close (); });
+  connect (ui.pbtn1, &QPushButton::clicked, [&] { dialog.close (); });
 
-  connect (ui.pbtn2, &QPushButton::clicked, [this, &ui, &dialog] {
+  connect (ui.pbtn2, &QPushButton::clicked, [&, this] {
     auto name = ui.ledit1->text ();
     auto start = ui.ledit2->text ();
     if (name.isEmpty () || start.isEmpty ())
@@ -181,7 +182,20 @@ Home::on_pbtn5_clicked ()
   QMessageBox::information (nullptr, tr ("成功"), tr ("选修成功"));
 }
 
+#include "ui_grade.h"
+
+void
+Home::grade_analy ()
+{
+  auto dialog = QDialog (this);
+  auto ui = Ui::Grade ();
+  ui.setupUi (&dialog);
+
+  dialog.exec ();
+}
+
 void
 Home::on_pbtn6_clicked ()
 {
+  grade_analy ();
 }

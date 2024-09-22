@@ -13,16 +13,12 @@ class Home : public QMainWindow
 {
   Q_OBJECT
 
-  friend class Log;
-  friend class Mod;
-  friend class New;
-  friend class Eva;
-
 public:
   struct Info
   {
     QString user;
     QString name;
+    QString start;
     QString token;
   };
 
@@ -38,6 +34,7 @@ private:
   void load_course ();
   void load_grade ();
   void course_new ();
+  void grade_analy ();
 
 private slots:
   void on_pbtn1_clicked ();
