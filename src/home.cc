@@ -1,7 +1,6 @@
 #include "home.h"
-#include "citem.h"
-#include "gitem.h"
 #include "http.h"
+#include "item.h"
 
 #include <QJsonArray>
 #include <QJsonDocument>
