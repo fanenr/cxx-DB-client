@@ -45,8 +45,8 @@ Log::on_pbtn2_clicked ()
       = QString (type == Type::STUDENT ? URL_STUDENT_LOG : URL_TEACHER_LOG);
 
   auto req_data = QMap<QString, QVariant> ();
+  req_data["password"] = std::move (pass);
   req_data["username"] = user;
-  req_data["password"] = pass;
 
   auto http = Http ();
   auto req = Http::make_req (req_url);

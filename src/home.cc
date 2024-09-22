@@ -109,7 +109,8 @@ Home::on_pbtn3_clicked ()
 void
 Home::on_pbtn4_clicked ()
 {
-  load_grade ();
+  if (type == Type::STUDENT)
+    load_grade ();
 }
 
 #include "ui_form.h"
@@ -168,7 +169,7 @@ Home::on_pbtn5_clicked ()
 
   auto req_url = QString (URL_STUDENT_TAKE);
   auto req_data = QMap<QString, QVariant> ();
-  req_data["cid"] = QString::number (item->data.id);
+  req_data["cid"] = item->data.id;
 
   auto http = Http ();
   auto req = Http::make_req (req_url, info.token);
