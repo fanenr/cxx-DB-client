@@ -123,6 +123,7 @@ Home::course_new ()
   ui.setupUi (&dialog);
 
   dialog.setWindowTitle (tr ("创建课程"));
+  ui.ledit2->setInputMask ("0000-00-00");
   ui.label->setText (tr ("课程信息"));
   ui.hint1->setText (tr ("课程名称"));
   ui.hint2->setText (tr ("开课时间"));
@@ -137,7 +138,7 @@ Home::course_new ()
                                          tr ("请完整填写信息"));
 
     auto req_url = QString (URL_TEACHER_NEW);
-    auto req_data = QMap<QString, QString> ();
+    auto req_data = QMap<QString, QVariant> ();
     req_data["start"] = std::move (start);
     req_data["name"] = std::move (name);
 
@@ -167,7 +168,7 @@ Home::on_pbtn5_clicked ()
     return;
 
   auto req_url = QString (URL_STUDENT_TAKE);
-  auto req_data = QMap<QString, QString> ();
+  auto req_data = QMap<QString, QVariant> ();
   req_data["cid"] = QString::number (item->data.id);
 
   auto http = Http ();

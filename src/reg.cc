@@ -42,7 +42,7 @@ Reg::on_pbtn2_clicked ()
   auto req_url
       = QString (type == Type::STUDENT ? URL_STUDENT_REG : URL_TEACHER_REG);
 
-  auto req_data = QMap<QString, QString> ();
+  auto req_data = QMap<QString, QVariant> ();
   req_data["name"] = std::move (name);
   req_data["start"] = std::move (date);
   req_data["username"] = parent->ui.ledit1->text ();

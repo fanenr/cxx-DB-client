@@ -44,7 +44,7 @@ Log::on_pbtn2_clicked ()
   auto req_url
       = QString (type == Type::STUDENT ? URL_STUDENT_LOG : URL_TEACHER_LOG);
 
-  auto req_data = QMap<QString, QString> ();
+  auto req_data = QMap<QString, QVariant> ();
   req_data["username"] = user;
   req_data["password"] = pass;
 

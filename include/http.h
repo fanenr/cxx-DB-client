@@ -4,7 +4,6 @@
 #include <QEventLoop>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkReply>
-#include <optional>
 
 class Http : QObject
 {
@@ -54,15 +53,15 @@ public:
   }
 
   QNetworkReply *
-  post (QNetworkRequest const &req, QMap<QString, QString> const &map)
+  post (QNetworkRequest const &req, QMap<QString, QVariant> const &map)
   {
     auto str = QString ();
 
     for (auto it = map.cbegin (); it != map.cend ();)
       {
-        str += it.key ();
-        str.append ("=");
-        str += it.value ();
+        str.append (it.key ()).append ("=");
+        auto value = it.value ().toString ();
+        str += QUrl::toPercentEncoding (value);
 
         if (++it != map.cend ())
           str.append ("&");
