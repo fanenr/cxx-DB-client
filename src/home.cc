@@ -191,11 +191,73 @@ Home::grade_analy ()
   auto ui = Ui::Grade ();
   ui.setupUi (&dialog);
 
+  auto list = this->ui.list;
+  auto count = list->count ();
+  auto items = QList<GradeItem *> ();
+
+  for (int i = 0; i < count; i++)
+    items.append ((GradeItem *)list->item (i));
+
+  long sum_grade = 0;
+  double sum_point = 0;
+
+  auto points = QMap<double, int> ();
+  points[0.0] = 0;
+  points[1.0] = 0;
+  points[1.5] = 0;
+  points[2.0] = 0;
+  points[2.3] = 0;
+  points[2.7] = 0;
+  points[3.0] = 0;
+  points[3.3] = 0;
+  points[3.7] = 0;
+  points[4.0] = 0;
+
+  for (auto i : items)
+    {
+      auto s = i->data.score;
+      sum_grade += s;
+
+      if (s < 60)
+        points[0.0]++;
+      else if (s < 64)
+        points[1.0]++;
+      else if (s < 68)
+        points[1.5]++;
+      else if (s < 72)
+        points[2.0]++;
+      else if (s < 75)
+        points[2.3]++;
+      else if (s < 78)
+        points[2.7]++;
+      else if (s < 82)
+        points[3.0]++;
+      else if (s < 85)
+        points[3.3]++;
+      else if (s < 90)
+        points[3.7]++;
+      else
+        points[4.0]++;
+    }
+
+  for (auto it = points.cbegin (); it != points.cend (); it++)
+    sum_point += it.key () * it.value ();
+
+  auto avg_grade = count ? sum_grade / count : 0;
+  auto avg_point = count ? sum_point / (double)count : 0.0;
+  auto rate = count ? (count - points[0.0]) / (double)count : 0.0;
+
+  ui.info1->setText (QString::number (count));
+  ui.info3->setText (QString::number (avg_grade));
+  ui.info2->setText (QString::number (rate, 'f', 1));
+  ui.info4->setText (QString::number (avg_point, 'f', 1));
+
   dialog.exec ();
 }
 
 void
 Home::on_pbtn6_clicked ()
 {
+  load_grade ();
   grade_analy ();
 }
