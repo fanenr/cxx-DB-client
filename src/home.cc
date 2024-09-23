@@ -258,6 +258,9 @@ Home::grade_analy ()
 void
 Home::on_pbtn6_clicked ()
 {
+  if (type == Type::TEACHER)
+    return;
+
   load_grade ();
   grade_analy ();
 }

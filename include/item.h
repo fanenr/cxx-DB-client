@@ -1,8 +1,7 @@
 #ifndef ITEM_H
 #define ITEM_H
 
-#include "ui_citem.h"
-#include "ui_gitem.h"
+#include "ui_item.h"
 #include <QListWidgetItem>
 
 struct Grade
@@ -26,14 +25,15 @@ class GradeWidget : public QWidget
   Q_OBJECT
 
 private:
-  Ui::Gitem ui = {};
+  Ui::Item ui = {};
 
 public:
   GradeWidget (Grade const &data)
   {
     ui.setupUi (this);
     ui.label1->setText (data.course);
-    ui.label2->setText (QString::number (data.score));
+    ui.label2->setText (data.teacher);
+    ui.label3->setText (QString::number (data.score));
   }
 };
 
@@ -42,14 +42,15 @@ class CourseWidget : public QWidget
   Q_OBJECT
 
 private:
-  Ui::Citem ui = {};
+  Ui::Item ui = {};
 
 public:
   CourseWidget (Course const &data)
   {
     ui.setupUi (this);
     ui.label1->setText (data.name);
-    ui.label2->setText (data.teacher);
+    ui.label2->setText (data.start);
+    ui.label3->setText (data.teacher);
   }
 };
 
@@ -69,7 +70,7 @@ public:
   bool
   operator< (QListWidgetItem const &other) const override
   {
-    return data.course < ((GradeItem const &)other).data.course;
+    return data.score < ((GradeItem const &)other).data.score;
   }
 };
 
