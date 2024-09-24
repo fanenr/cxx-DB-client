@@ -8,8 +8,8 @@ struct Grade
 {
   int id;
   int score;
+  QString name;
   QString course;
-  QString teacher;
 };
 
 struct Course
@@ -31,8 +31,8 @@ public:
   GradeWidget (Grade const &data)
   {
     ui.setupUi (this);
+    ui.label2->setText (data.name);
     ui.label1->setText (data.course);
-    ui.label2->setText (data.teacher);
     ui.label3->setText (QString::number (data.score));
   }
 };

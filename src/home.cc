@@ -17,7 +17,10 @@ Home::Home (Type type, Info info)
   ui.info3->setText (this->info.start);
 
   if (this->type == Type::TEACHER)
-    ui.pbtn5->setText (tr ("创建课程"));
+    {
+      ui.pbtn5->setText (tr ("创建课程"));
+      ui.pbtn6->setText (tr ("更新成绩"));
+    }
 
   connect (ui.sort, &QCheckBox::toggled, [this] (bool dec) {
     ui.list->sortItems (dec ? Qt::DescendingOrder : Qt::AscendingOrder);
@@ -66,7 +69,8 @@ Home::load_grade ()
   ui.list->clearSelection ();
   ui.gbox2->setTitle (tr ("成绩列表"));
 
-  auto req_url = QString (URL_STUDENT_GRADE);
+  auto req_url = QString (type == Type::STUDENT ? URL_STUDENT_GRADE
+                                                : URL_TEACHER_GRADE);
 
   auto http = Http ();
   auto req = Http::make_req (req_url, info.token);
@@ -83,8 +87,8 @@ Home::load_grade ()
       auto item = Grade{
         .id = obj["id"].toInt (),
         .score = obj["score"].toInt (),
+        .name = obj["name"].toString (),
         .course = obj["course"].toString (),
-        .teacher = obj["teacher"].toString (),
       };
       new GradeItem (ui.list, std::move (item));
     }
@@ -110,8 +114,7 @@ Home::on_pbtn3_clicked ()
 void
 Home::on_pbtn4_clicked ()
 {
-  if (type == Type::STUDENT)
-    load_grade ();
+  load_grade ();
 }
 
 #include "ui_form.h"
@@ -184,9 +187,16 @@ Home::on_pbtn5_clicked ()
 
 #include "ui_grade.h"
 
+#include <QtCharts/QChart>
+#include <QtCharts/QChartView>
+#include <QtCharts/QPieSeries>
+#include <QtCharts/QPieSlice>
+
 void
 Home::grade_analy ()
 {
+  load_grade ();
+
   auto dialog = QDialog (this);
   auto ui = Ui::Grade ();
   ui.setupUi (&dialog);
@@ -200,6 +210,10 @@ Home::grade_analy ()
 
   long sum_grade = 0;
   double sum_point = 0;
+
+  auto chart = new QChart ();
+  auto view = new QChartView ();
+  auto series = new QPieSeries ();
 
   auto points = QMap<double, int> ();
   points[0.0] = 0;
@@ -241,16 +255,84 @@ Home::grade_analy ()
     }
 
   for (auto it = points.cbegin (); it != points.cend (); it++)
-    sum_point += it.key () * it.value ();
+    {
+      auto key = it.key ();
+      auto value = it.value ();
+      sum_point += key * value;
+
+      if (value != 0)
+        {
+          auto rate = value / (double)count;
+          series->append (QString::number (key, 'f', 1), rate);
+        }
+    }
 
   auto avg_grade = count ? sum_grade / count : 0;
   auto avg_point = count ? sum_point / (double)count : 0.0;
   auto rate = count ? (count - points[0.0]) / (double)count : 0.0;
 
   ui.info1->setText (QString::number (count));
-  ui.info3->setText (QString::number (avg_grade));
-  ui.info2->setText (QString::number (rate, 'f', 1));
+  ui.info2->setText (QString::number (avg_grade));
+  ui.info3->setText (QString::number (rate, 'f', 1));
   ui.info4->setText (QString::number (avg_point, 'f', 1));
+
+  series->setHoleSize (0.3);
+  series->setLabelsVisible (true);
+
+  chart->addSeries (series);
+  chart->setTitle (tr ("成绩分布"));
+  chart->legend ()->setVisible (true);
+  chart->legend ()->setAlignment (Qt::AlignRight);
+
+  view->setChart (chart);
+  view->setRenderHint (QPainter::Antialiasing);
+
+  ui.vlay2->addWidget (view);
+
+  dialog.exec ();
+}
+
+void
+Home::grade_mark ()
+{
+  auto item = (GradeItem *)ui.list->currentItem ();
+  if (item == nullptr)
+    return;
+
+  auto dialog = QDialog (this);
+  auto ui = Ui::Form ();
+  ui.setupUi (&dialog);
+
+  dialog.setWindowTitle (tr ("更新成绩"));
+  ui.label->setText (tr ("成绩信息"));
+  ui.hint1->setText (tr ("新成绩"));
+  ui.ledit2->setVisible (false);
+  ui.hint2->setVisible (false);
+
+  connect (ui.pbtn1, &QPushButton::clicked, [&] { dialog.close (); });
+
+  connect (ui.pbtn2, &QPushButton::clicked, [&, this] {
+    auto score = ui.ledit1->text ();
+    if (score.isEmpty ())
+      return (void)QMessageBox::warning (nullptr, tr ("提示"),
+                                         tr ("请完整填写信息"));
+
+    auto req_url = QString (URL_TEACHER_MARK);
+    auto req_data = QMap<QString, QVariant> ();
+    req_data["score"] = std::move (score);
+    req_data["gid"] = item->data.id;
+
+    auto http = Http ();
+    auto req = Http::make_req (req_url, info.token);
+
+    auto reply = http.post (req, req_data);
+    if (!util::check_reply (reply))
+      return;
+
+    QMessageBox::information (nullptr, tr ("成功"), tr ("更新成功"));
+    dialog.close ();
+    load_course ();
+  });
 
   dialog.exec ();
 }
@@ -258,9 +340,5 @@ Home::grade_analy ()
 void
 Home::on_pbtn6_clicked ()
 {
-  if (type == Type::TEACHER)
-    return;
-
-  load_grade ();
-  grade_analy ();
+  type == Type::STUDENT ? grade_analy () : grade_mark ();
 }

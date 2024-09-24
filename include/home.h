@@ -34,6 +34,7 @@ private:
   void load_course ();
   void load_grade ();
   void course_new ();
+  void grade_mark ();
   void grade_analy ();
 
 private slots:
