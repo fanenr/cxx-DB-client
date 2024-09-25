@@ -254,6 +254,11 @@ Home::grade_analy ()
         points[4.0]++;
     }
 
+  auto on_slice_hovered = [this] (bool sts) {
+    auto slice = (QPieSlice *)QObject::sender ();
+    slice->setExploded (sts);
+  };
+
   for (auto it = points.cbegin (); it != points.cend (); it++)
     {
       auto key = it.key ();
@@ -263,7 +268,11 @@ Home::grade_analy ()
       if (value != 0)
         {
           auto rate = value / (double)count;
-          series->append (QString::number (key, 'f', 1), rate);
+          auto label = QString::number (key, 'f', 1);
+          auto slice = new QPieSlice (label, rate, series);
+          connect (slice, &QPieSlice::hovered, this, on_slice_hovered);
+
+          series->append (slice);
         }
     }
 
@@ -331,7 +340,7 @@ Home::grade_mark ()
 
     QMessageBox::information (nullptr, tr ("成功"), tr ("更新成功"));
     dialog.close ();
-    load_course ();
+    load_grade ();
   });
 
   dialog.exec ();
