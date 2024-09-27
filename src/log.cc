@@ -52,7 +52,7 @@ Log::on_pbtn1_clicked ()
     req_data["name"] = std::move (name);
 
     auto http = Http ();
-    auto req = Http::make_req (req_url);
+    auto req = Request (req_url).form ();
     auto reply = http.post (req, req_data);
 
     if (!util::check_reply (reply))
@@ -85,7 +85,7 @@ Log::on_pbtn2_clicked ()
   req_data["username"] = user;
 
   auto http = Http ();
-  auto req = Http::make_req (req_url);
+  auto req = Request (req_url).form ();
   auto reply = http.post (req, req_data);
 
   if (!util::check_reply (reply))

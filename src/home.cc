@@ -40,7 +40,7 @@ Home::load_course ()
       = QString (type == Type::STUDENT ? URL_STUDENT_LIST : URL_TEACHER_LIST);
 
   auto http = Http ();
-  auto req = Http::make_req (req_url, info.token);
+  auto req = Request (req_url).form ().jwt (info.token);
 
   auto reply = http.get (req);
   if (!util::check_reply (reply))
@@ -73,7 +73,7 @@ Home::load_grade ()
                                                 : URL_TEACHER_GRADE);
 
   auto http = Http ();
-  auto req = Http::make_req (req_url, info.token);
+  auto req = Request (req_url).form ().jwt (info.token);
 
   auto reply = http.get (req);
   if (!util::check_reply (reply))
@@ -147,7 +147,7 @@ Home::course_new ()
     req_data["name"] = std::move (name);
 
     auto http = Http ();
-    auto req = Http::make_req (req_url, info.token);
+    auto req = Request (req_url).form ().jwt (info.token);
 
     auto reply = http.post (req, req_data);
     if (!util::check_reply (reply))
@@ -176,7 +176,7 @@ Home::on_pbtn5_clicked ()
   req_data["cid"] = item->data.id;
 
   auto http = Http ();
-  auto req = Http::make_req (req_url, info.token);
+  auto req = Request (req_url).form ().jwt (info.token);
 
   auto reply = http.post (req, req_data);
   if (!util::check_reply (reply))
@@ -332,7 +332,7 @@ Home::grade_mark ()
     req_data["gid"] = item->data.id;
 
     auto http = Http ();
-    auto req = Http::make_req (req_url, info.token);
+    auto req = Request (req_url).form ().jwt (info.token);
 
     auto reply = http.post (req, req_data);
     if (!util::check_reply (reply))
