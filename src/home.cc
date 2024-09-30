@@ -36,8 +36,8 @@ Home::load_course ()
   ui.list->clearSelection ();
   ui.gbox2->setTitle (tr ("课程列表"));
 
-  auto req_url
-      = QString (type == Type::STUDENT ? URL_STUDENT_LIST : URL_TEACHER_LIST);
+  auto req_url = QString (type == Type::STUDENT ? URL_STUDENT_COURSE_LIST
+                                                : URL_TEACHER_COURSE_LIST);
 
   auto http = Http ();
   auto req = Request (req_url).form ().jwt (info.token);
@@ -69,8 +69,8 @@ Home::load_grade ()
   ui.list->clearSelection ();
   ui.gbox2->setTitle (tr ("成绩列表"));
 
-  auto req_url = QString (type == Type::STUDENT ? URL_STUDENT_GRADE
-                                                : URL_TEACHER_GRADE);
+  auto req_url = QString (type == Type::STUDENT ? URL_STUDENT_GRADE_LIST
+                                                : URL_TEACHER_GRADE_LIST);
 
   auto http = Http ();
   auto req = Request (req_url).form ().jwt (info.token);
@@ -141,7 +141,7 @@ Home::course_new ()
       return (void)QMessageBox::warning (nullptr, tr ("提示"),
                                          tr ("请完整填写信息"));
 
-    auto req_url = QString (URL_TEACHER_NEW);
+    auto req_url = QString (URL_TEACHER_COURSE_CREATE);
     auto req_data = QMap<QString, QVariant> ();
     req_data["start"] = std::move (start);
     req_data["name"] = std::move (name);
@@ -171,7 +171,7 @@ Home::on_pbtn5_clicked ()
   if (item == nullptr)
     return;
 
-  auto req_url = QString (URL_STUDENT_TAKE);
+  auto req_url = QString (URL_STUDENT_COURSE_TAKE);
   auto req_data = QMap<QString, QVariant> ();
   req_data["cid"] = item->data.id;
 
@@ -326,7 +326,7 @@ Home::grade_mark ()
       return (void)QMessageBox::warning (nullptr, tr ("提示"),
                                          tr ("请完整填写信息"));
 
-    auto req_url = QString (URL_TEACHER_MARK);
+    auto req_url = QString (URL_TEACHER_GRADE_UPDATE);
     auto req_data = QMap<QString, QVariant> ();
     req_data["score"] = std::move (score);
     req_data["gid"] = item->data.id;
