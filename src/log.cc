@@ -42,18 +42,19 @@ Log::on_pbtn1_clicked ()
       return (void)QMessageBox::warning (nullptr, tr ("提示"),
                                          tr ("请完整填写信息"));
 
-    auto req_url = QString (type == Type::STUDENT ? URL_STUDENT_REGISTER
-                                                  : URL_TEACHER_REGISTER);
+    auto url = QString (type == Type::STUDENT ? URL_STUDENT_REGISTER
+                                              : URL_TEACHER_REGISTER);
 
-    auto req_data = QMap<QString, QVariant> ();
-    req_data["username"] = std::move (user);
-    req_data["password"] = std::move (pass);
-    req_data["start"] = std::move (date);
-    req_data["name"] = std::move (name);
+    auto data = QMap<QString, QVariant>{
+      { "username", std::move (user) },
+      { "password", std::move (pass) },
+      { "start", std::move (date) },
+      { "name", std::move (name) },
+    };
 
     auto http = Http ();
-    auto req = Request (req_url).form ();
-    auto reply = http.post (req, req_data);
+    auto req = Request (url).form ();
+    auto reply = http.post (req, data);
 
     if (!util::check_reply (reply))
       return;
@@ -77,23 +78,22 @@ Log::on_pbtn2_clicked ()
                                        tr ("请输入帐号密码"));
 
   auto type = category ();
-  auto req_url = QString (type == Type::STUDENT ? URL_STUDENT_LOGIN
-                                                : URL_TEACHER_LOGIN);
+  auto url = QString (type == Type::STUDENT ? URL_STUDENT_LOGIN
+                                            : URL_TEACHER_LOGIN);
 
-  auto req_data = QMap<QString, QVariant> ();
-  req_data["password"] = std::move (pass);
-  req_data["username"] = user;
+  auto data = QMap<QString, QVariant>{
+    { "password", std::move (pass) },
+    { "username", user },
+  };
 
   auto http = Http ();
-  auto req = Request (req_url).form ();
-  auto reply = http.post (req, req_data);
+  auto req = Request (url).form ();
+  auto reply = http.post (req, data);
 
   if (!util::check_reply (reply))
     return;
 
-  auto data = reply->readAll ();
-  auto obj = QJsonDocument::fromJson (data).object ();
-
+  auto obj = QJsonDocument::fromJson (reply->readAll ()).object ();
   auto info = Home::Info{
     .user = std::move (user),
     .name = obj["name"].toString (),
