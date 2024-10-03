@@ -4,11 +4,6 @@
 #include "ui_home.h"
 #include "util.h"
 
-class Mod;
-class New;
-class Eva;
-class Log;
-
 class Home : public QMainWindow
 {
   Q_OBJECT
